@@ -38,16 +38,16 @@ The site defines five Jekyll collections in `_config.yml`, each mapped to a dedi
 | `techstack` | `techstack/` | 技术栈 | `/:collection/:name/` |
 | `research` | `research/` | 研究笔记 | `/:collection/:name/` |
 
-Each collection directory contains an `index.md` that lists its members using Liquid (`{% for item in site.<collection> %}`). Adding a new markdown file to any collection directory automatically makes it appear in that section's index.
+Each collection directory contains an `index.md` that lists its members using Jekyll Liquid iteration. Adding a new markdown file to any collection directory automatically makes it appear in that section's index.
 
 ### Layouts
 
 - `_layouts/page.html` — Custom layout used by all collection pages. Injects a category tag, title, optional date, and content into a clean HTML shell with top navigation linking to all five sections.
-- `home` layout (from minima theme) — Used by the root `index.md`.
+- `_layouts/home.html` — Custom layout for the root `index.md`.
 
 ### Styling
 
-`assets/css/style.scss` imports the minima theme (`@import "minima"`) and adds small overrides: category tags, nav link spacing, post dates, and table formatting. Jekyll compiles `.scss` files automatically.
+`assets/css/style.scss` contains the complete site stylesheet with a dark theme, custom typography, and component styling. Jekyll compiles `.scss` files automatically.
 
 ### Content Conventions
 
@@ -58,6 +58,6 @@ Each collection directory contains an `index.md` that lists its members using Li
 
 ## Dependencies
 
-- Jekyll ~> 4.3
-- minima ~> 2.5
+- Jekyll (via GitHub Pages)
 - Plugins: `jekyll-feed`, `jekyll-sitemap`
+- No theme dependency — custom layouts and styles only

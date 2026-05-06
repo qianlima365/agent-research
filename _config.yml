@@ -58,3 +58,5 @@ defaults:
 
 markdown: kramdown
 highlighter: rouge
+exclude:
+  - CLAUDE.md
