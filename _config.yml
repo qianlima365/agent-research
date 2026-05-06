@@ -3,8 +3,6 @@ description: AI Agent 开源项目、开发框架与技术栈研究
 baseurl: "/agent-research"
 url: "https://yafeiwang.github.io"
 
-theme: minima
-
 plugins:
   - jekyll-feed
   - jekyll-sitemap

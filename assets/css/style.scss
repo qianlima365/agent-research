@@ -40,29 +40,7 @@
 }
 
 // ═══════════════════════════════════════════════════════
-//  Override minima variables before import
-// ═══════════════════════════════════════════════════════
-$base-font-family: var(--font-body);
-$base-font-size: 16px;
-$base-font-weight: 400;
-$small-font-size: 14px;
-$base-line-height: 1.8;
-$spacing-unit: 32px;
-
-$text-color: var(--text-primary);
-$background-color: var(--bg-primary);
-$brand-color: var(--accent);
-$grey-color: var(--text-secondary);
-$grey-color-light: var(--border);
-$grey-color-dark: var(--text-muted);
-
-$table-text-align: left;
-$content-width: 860px;
-
-@import "minima";
-
-// ═══════════════════════════════════════════════════════
-//  Global Reset & Base Overrides
+//  Global Reset & Base
 // ═══════════════════════════════════════════════════════
 *,
 *::before,
@@ -74,13 +52,16 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
 }
 
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   font-family: var(--font-body);
+  font-weight: 400;
   line-height: 1.8;
+  margin: 0;
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
@@ -89,6 +70,12 @@ body {
 ::selection {
   background: var(--accent-dim);
   color: var(--accent-light);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 // ═══════════════════════════════════════════════════════
