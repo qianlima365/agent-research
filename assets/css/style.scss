@@ -1,0 +1,42 @@
+---
+---
+
+@import "minima";
+
+.category-tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  background: #e1e4e8;
+  color: #586069;
+  font-size: 0.85em;
+  margin-bottom: 8px;
+}
+
+.nav-links a {
+  margin-left: 16px;
+  font-size: 0.9em;
+}
+
+.post-date {
+  color: #586069;
+  font-size: 0.9em;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+}
+
+table th, table td {
+  border: 1px solid #dfe2e5;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+table th {
+  background: #f6f8fa;
+  font-weight: 600;
+}

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page.title }} | {{ site.title }}</title>
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="{{ '/' | relative_url }}">{{ site.title }}</a>
+      <span class="nav-links">
+        <a href="{{ '/frameworks/' | relative_url }}">框架</a>
+        <a href="{{ '/projects/' | relative_url }}">开源项目</a>
+        <a href="{{ '/development/' | relative_url }}">开发实践</a>
+        <a href="{{ '/techstack/' | relative_url }}">技术栈</a>
+        <a href="{{ '/research/' | relative_url }}">研究笔记</a>
+      </span>
+    </nav>
+  </header>
+
+  <main>
+    {% if page.category %}
+      <div class="category-tag">{{ page.category }}</div>
+    {% endif %}
+    <h1>{{ page.title }}</h1>
+    {% if page.date %}
+      <div class="post-date">{{ page.date | date: "%Y-%m-%d" }}</div>
+    {% endif %}
+    {{ content }}
+  </main>
+
+  <footer>
+    <p>AI Agent Research — 持续更新中</p>
+  </footer>
+</body>
+</html>

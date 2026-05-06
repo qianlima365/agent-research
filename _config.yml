@@ -1,0 +1,62 @@
+title: AI Agent Research
+description: AI Agent 开源项目、开发框架与技术栈研究
+baseurl: "/agent-research"
+url: "https://yafeiwang.github.io"
+
+theme: minima
+
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+collections:
+  frameworks:
+    output: true
+    permalink: /:collection/:name/
+  projects:
+    output: true
+    permalink: /:collection/:name/
+  development:
+    output: true
+    permalink: /:collection/:name/
+  techstack:
+    output: true
+    permalink: /:collection/:name/
+  research:
+    output: true
+    permalink: /:collection/:name/
+
+defaults:
+  - scope:
+      path: ""
+      type: "frameworks"
+    values:
+      layout: "page"
+      category: "框架"
+  - scope:
+      path: ""
+      type: "projects"
+    values:
+      layout: "page"
+      category: "开源项目"
+  - scope:
+      path: ""
+      type: "development"
+    values:
+      layout: "page"
+      category: "开发实践"
+  - scope:
+      path: ""
+      type: "techstack"
+    values:
+      layout: "page"
+      category: "技术栈"
+  - scope:
+      path: ""
+      type: "research"
+    values:
+      layout: "page"
+      category: "研究笔记"
+
+markdown: kramdown
+highlighter: rouge
