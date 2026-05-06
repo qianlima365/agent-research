@@ -11,9 +11,9 @@ title: 框架
 ## 收录框架
 
 <ul>
-{% for item in site.frameworks %}
-  {% if item.title != "框架" %}
-    <li><a href="{{ item.url | relative_url }}">{{ item.title }}</a></li>
+{% for page in site.pages %}
+  {% if page.path contains 'frameworks/' and page.name != 'index.md' %}
+    <li><a href="{{ page.url | relative_url }}">{{ page.title }}</a></li>
   {% endif %}
 {% endfor %}
 </ul>

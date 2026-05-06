@@ -11,9 +11,9 @@ title: 开发实践
 ## 主题
 
 <ul>
-{% for item in site.development %}
-  {% if item.title != "开发实践" %}
-    <li><a href="{{ item.url | relative_url }}">{{ item.title }}</a></li>
+{% for page in site.pages %}
+  {% if page.path contains 'development/' and page.name != 'index.md' %}
+    <li><a href="{{ page.url | relative_url }}">{{ page.title }}</a></li>
   {% endif %}
 {% endfor %}
 </ul>

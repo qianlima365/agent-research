@@ -11,9 +11,9 @@ title: 技术栈
 ## 内容
 
 <ul>
-{% for item in site.techstack %}
-  {% if item.title != "技术栈" %}
-    <li><a href="{{ item.url | relative_url }}">{{ item.title }}</a></li>
+{% for page in site.pages %}
+  {% if page.path contains 'techstack/' and page.name != 'index.md' %}
+    <li><a href="{{ page.url | relative_url }}">{{ page.title }}</a></li>
   {% endif %}
 {% endfor %}
 </ul>

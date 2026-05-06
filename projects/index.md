@@ -11,9 +11,9 @@ title: 开源项目
 ## 项目列表
 
 <ul>
-{% for item in site.projects %}
-  {% if item.title != "开源项目" %}
-    <li><a href="{{ item.url | relative_url }}">{{ item.title }}</a></li>
+{% for page in site.pages %}
+  {% if page.path contains 'projects/' and page.name != 'index.md' %}
+    <li><a href="{{ page.url | relative_url }}">{{ page.title }}</a></li>
   {% endif %}
 {% endfor %}
 </ul>

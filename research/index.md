@@ -11,9 +11,9 @@ title: 研究笔记
 ## 笔记列表
 
 <ul>
-{% for item in site.research %}
-  {% if item.title != "研究笔记" %}
-    <li><a href="{{ item.url | relative_url }}">{{ item.title }}</a></li>
+{% for page in site.pages %}
+  {% if page.path contains 'research/' and page.name != 'index.md' %}
+    <li><a href="{{ page.url | relative_url }}">{{ page.title }}</a></li>
   {% endif %}
 {% endfor %}
 </ul>
