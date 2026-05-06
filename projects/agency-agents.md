@@ -6,6 +6,7 @@ date: 2026-05-07
 # The Agency / agency-agents
 
 **仓库**: [msitarzewski/agency-agents](https://github.com/msitarzewski/agency-agents)
+[中文版](https://github.com/jnMetaCode/agency-agents-zh)
 
 > "A complete AI agency at your fingertips"
 
