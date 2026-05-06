@@ -120,6 +120,379 @@ You are a senior backend architect specializing in scalable system design...
 
 ---
 
+## 技术架构与伪代码实现
+
+### Claude Code：分层隔离架构
+
+Claude Code 的多 Agent 系统可以抽象为四层：
+
+```
+┌─────────────────────────────────────────────┐
+│  Layer 4: Orchestrator（主会话调度器）         │
+│  - 解析用户意图，决定调用哪个子 Agent           │
+│  - 管理子 Agent 的生命周期（创建/销毁/暂停）    │
+│  - 所有子 Agent 的输出汇总后返回给用户          │
+├─────────────────────────────────────────────┤
+│  Layer 3: SubAgent Pool（子 Agent 池）         │
+│  - 每个子 Agent 有独立的 Context Window         │
+│  - 权限分级：只读(default) / 读写 / 危险操作    │
+│  - 子 Agent 之间不可直接通信                    │
+├─────────────────────────────────────────────┤
+│  Layer 2: MCP Client（工具中间层）              │
+│  - 统一协议与外部工具交互                       │
+│  - 工具调用前的权限检查                         │
+│  - 结果序列化后注入子 Agent 上下文              │
+├─────────────────────────────────────────────┤
+│  Layer 1: Tool Ecosystem（工具生态）            │
+│  - FileSystem / Git / Browser / Database ...   │
+│  - 自定义 MCP Server                           │
+└─────────────────────────────────────────────┘
+```
+
+**伪代码：Orchestrator-Worker 模式**
+
+```python
+class Orchestrator:
+    def __init__(self):
+        self.agent_pool = {}          # agent_id -> SubAgent
+        self.mcp_client = MCPClient() # 统一工具客户端
+        self.session_context = []     # 主会话历史
+
+    def dispatch(self, user_input: str) -> str:
+        """解析用户意图，调度子 Agent"""
+        # 1. 意图路由：决定需要哪些专家
+        required_agents = self._route_intent(user_input)
+
+        results = []
+        for agent_id in required_agents:
+            # 2. 创建或复用子 Agent（隔离上下文）
+            agent = self._get_or_create_agent(agent_id)
+
+            # 3. 构建任务包（只传递必要上下文）
+            task_package = {
+                "task": user_input,
+                "context": self._filter_context(agent_id, self.session_context),
+                "tools": agent.allowed_tools  # 权限受限的工具列表
+            }
+
+            # 4. 执行子任务
+            result = agent.execute(task_package)
+            results.append(result)
+
+        # 5. 汇总结果，更新主会话
+        final = self._synthesize(results)
+        self.session_context.append(("user", user_input))
+        self.session_context.append(("assistant", final))
+        return final
+
+    def _get_or_create_agent(self, agent_id: str) -> SubAgent:
+        if agent_id not in self.agent_pool:
+            config = load_agent_config(f"~/.claude/agents/{agent_id}.md")
+            self.agent_pool[agent_id] = SubAgent(
+                config=config,
+                mcp_client=self.mcp_client,  # 共享 MCP 客户端
+                read_only=True               # 默认只读，需显式授权
+            )
+        return self.agent_pool[agent_id]
+
+
+class SubAgent:
+    def __init__(self, config, mcp_client, read_only=True):
+        self.config = config
+        self.mcp = mcp_client
+        self.read_only = read_only
+        self.context_window = []  # 独立上下文，与主会话隔离
+
+    def execute(self, task_package: dict) -> str:
+        """子 Agent 执行逻辑"""
+        # 加载 Agent 人格定义
+        system_prompt = self.config.system_message
+
+        # 构建消息历史（仅包含本次任务相关上下文）
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": task_package["task"]},
+            {"role": "system", "content": f"可用工具：{task_package['tools']}"}
+        ]
+
+        # 调用 LLM，可能产生工具调用请求
+        response = llm.chat(messages)
+
+        # 如果请求工具调用，通过 MCP 客户端执行（受权限限制）
+        if response.tool_calls:
+            for tool_call in response.tool_calls:
+                if self.read_only and tool_call.name in WRITE_TOOLS:
+                    raise PermissionError(f"只读 Agent 不能调用 {tool_call.name}")
+                tool_result = self.mcp.call(tool_call)
+                messages.append({"role": "tool", "content": tool_result})
+
+        # 生成最终回复
+        final = llm.chat(messages)
+        return final.content
+```
+
+**伪代码：Ultra Plan（三探索 + 一评审）**
+
+```python
+class UltraPlan:
+    """Claude Code Ultra 的并行探索模式"""
+
+    def solve(self, problem: str) -> str:
+        # 1. 启动 3 个 Explorer Agent（并行）
+        explorers = [
+            SubAgent(config=load("explorer-1.md"), strategy="保守"),
+            SubAgent(config=load("explorer-2.md"), strategy="激进"),
+            SubAgent(config=load("explorer-3.md"), strategy="创新"),
+        ]
+
+        solutions = []
+        with ThreadPoolExecutor(max_workers=3) as executor:
+            futures = [
+                executor.submit(exp.execute, problem)
+                for exp in explorers
+            ]
+            for future in futures:
+                solutions.append(future.result())
+
+        # 2. 启动 Critic Agent（独立评审，避免自我偏差）
+        critic = SubAgent(config=load("critic.md"), read_only=True)
+        evaluation = critic.execute(
+            f"请客观评审以下三个方案，选出最优：\n"
+            f"方案A：{solutions[0]}\n"
+            f"方案B：{solutions[1]}\n"
+            f"方案C：{solutions[2]}"
+        )
+
+        # 3. 返回最优方案 + 评审理由
+        best = self._extract_best(evaluation, solutions)
+        return f"{best}\n\n【评审意见】{evaluation}"
+```
+
+---
+
+### OpenClaw：注册中心 + 消息总线架构
+
+OpenClaw 的多 Agent 系统可以抽象为三层：
+
+```
+┌─────────────────────────────────────────────┐
+│  Layer 3: Gateway（多平台网关）                │
+│  - WebSocket 统一接入层                        │
+│  - 适配 WhatsApp/Discord/Slack/飞书 等 20+ 平台 │
+│  - 消息格式标准化（入站/出站转换）              │
+├─────────────────────────────────────────────┤
+│  Layer 2: Agent Registry + Message Bus        │
+│  - Agent 注册中心（agentId -> Agent 实例）      │
+│  - agentToAgent 工具（直接 RPC 调用）           │
+│  - Cron Scheduler（定时唤醒调度器）             │
+├─────────────────────────────────────────────┤
+│  Layer 1: Agent Workers（Agent 工作池）        │
+│  - 每个 Agent 加载 SOUL.md + AGENTS.md        │
+│  - 独立进程/线程运行，常驻内存                  │
+│  - 通过共享文件/Convex DB 持久化状态            │
+└─────────────────────────────────────────────┘
+```
+
+**伪代码：Agent 注册与发现**
+
+```python
+class AgentRegistry:
+    """Agent 注册中心，管理所有活跃 Agent"""
+
+    def __init__(self):
+        self.agents: dict[str, Agent] = {}  # agentId -> Agent
+        self.message_bus = MessageBus()      # 内部消息总线
+
+    def register(self, workspace_path: str):
+        """注册一个 Agent（从 workspace 目录加载）"""
+        agent_id = Path(workspace_path).name
+
+        # 加载三文件体系
+        soul = load_markdown(f"{workspace_path}/SOUL.md")
+        agents_contract = load_markdown(f"{workspace_path}/AGENTS.md")
+        identity = load_markdown(f"{workspace_path}/IDENTITY.md")
+
+        agent = Agent(
+            agent_id=agent_id,
+            soul=soul,              # 核心人格
+            contract=agents_contract,  # 协作契约
+            identity=identity,      # 身份边界
+            llm=create_llm(identity.model_preference)  # 按偏好选择模型
+        )
+
+        self.agents[agent_id] = agent
+        self.message_bus.subscribe(agent_id, agent.on_message)
+        return agent
+
+    def discover(self, capability: str) -> list[str]:
+        """根据能力发现 Agent（用于动态组队）"""
+        matches = []
+        for agent_id, agent in self.agents.items():
+            if capability in agent.identity.capabilities:
+                matches.append(agent_id)
+        return matches
+
+
+class Agent:
+    """单个 Agent 实例，常驻运行"""
+
+    def __init__(self, agent_id, soul, contract, identity, llm):
+        self.agent_id = agent_id
+        self.soul = soul
+        self.contract = contract      # 定义了输入/输出/依赖接口
+        self.identity = identity      # 能力清单 + 不处理事项
+        self.llm = llm
+        self.state = {}               # 运行时状态（可持久化）
+        self.memory = VectorStore()   # 长期记忆（向量检索）
+
+    def on_message(self, message: Message):
+        """接收消息并处理"""
+        # 1. 判断消息类型
+        if message.type == "direct":
+            # 直接请求：执行任务
+            result = self.execute(message.content, message.from_agent)
+            self.send_reply(message.from_agent, result)
+
+        elif message.type == "broadcast":
+            # 广播消息：判断是否与自己相关
+            if self._is_relevant(message.content):
+                result = self.execute(message.content)
+                self.broadcast(result)
+
+        elif message.type == "cron_wake":
+            # Cron 唤醒：检查待办事项
+            pending = self._check_pending_tasks()
+            for task in pending:
+                result = self.execute(task)
+                self.state[task.id] = {"status": "done", "result": result}
+                self.persist_state()
+
+    def execute(self, task: str, from_agent: str = None) -> str:
+        """执行任务的核心逻辑"""
+        # 1. 检查是否在能力范围内
+        if not self._can_handle(task):
+            return f"【{self.agent_id}】此任务超出我的能力范围：{self.identity.cannot_handle}"
+
+        # 2. 检索相关记忆
+        relevant_memories = self.memory.search(task, top_k=3)
+
+        # 3. 构建提示（注入人格 + 契约 + 记忆）
+        prompt = f"""
+        {self.soul.core_values}
+        {self.soul.decision_style}
+
+        协作契约：
+        {self.contract.input_contract}
+        {self.contract.output_contract}
+
+        相关历史记忆：
+        {relevant_memories}
+
+        当前任务：{task}
+        请求来源：{from_agent or 'user'}
+        """
+
+        # 4. 调用 LLM
+        response = self.llm.generate(prompt)
+
+        # 5. 更新记忆
+        self.memory.add(f"Task: {task}\nResult: {response}")
+
+        return response
+
+    def agent_to_agent(self, target_agent_id: str, task: str) -> str:
+        """调用另一个 Agent（OpenClaw 的核心协作原语）"""
+        if target_agent_id not in registry.agents:
+            raise AgentNotFoundError(target_agent_id)
+
+        # 检查契约：我是否有权限调用它？
+        if target_agent_id not in self.contract.dependencies:
+            raise ContractViolationError(f"未声明对 {target_agent_id} 的依赖")
+
+        target = registry.agents[target_agent_id]
+        return target.execute(task, from_agent=self.agent_id)
+```
+
+**伪代码：Cron 调度与常驻运行**
+
+```python
+class CronScheduler:
+    """OpenClaw 的定时唤醒调度器"""
+
+    def __init__(self, registry: AgentRegistry):
+        self.registry = registry
+        self.schedules: dict[str, str] = {}  # agentId -> cron_expression
+
+    def schedule(self, agent_id: str, cron: str):
+        """为 Agent 注册定时任务"""
+        self.schedules[agent_id] = cron
+        # 实际实现：APScheduler / Celery Beat
+
+    def run(self):
+        """主循环：持续检查是否有 Agent 需要唤醒"""
+        while True:
+            for agent_id, cron_expr in self.schedules.items():
+                if self._should_wake(cron_expr):
+                    agent = self.registry.agents[agent_id]
+                    # 发送唤醒消息（非阻塞）
+                    self.registry.message_bus.send(
+                        to=agent_id,
+                        message=Message(type="cron_wake", content="check_pending")
+                    )
+            sleep(60)  # 每分钟检查一次
+
+
+class Gateway:
+    """多平台消息网关"""
+
+    def __init__(self):
+        self.adapters = {
+            "discord": DiscordAdapter(),
+            "slack": SlackAdapter(),
+            "telegram": TelegramAdapter(),
+            "wechat": WeChatAdapter(),
+            # ... 20+ 平台
+        }
+
+    def on_inbound(self, platform: str, raw_message: dict):
+        """接收外部平台消息"""
+        # 1. 格式标准化
+        msg = self.adapters[platform].normalize(raw_message)
+
+        # 2. 路由到目标 Agent
+        target_agent = self._route(msg)
+
+        # 3. 转发到 Agent Registry
+        registry.message_bus.send(
+            to=target_agent,
+            message=Message(type="direct", content=msg.text, from_user=msg.user_id)
+        )
+
+    def on_outbound(self, agent_id: str, response: str, platform: str):
+        """将 Agent 回复发送到外部平台"""
+        raw = self.adapters[platform].denormalize(response)
+        self.adapters[platform].send(raw)
+```
+
+---
+
+## 核心实现差异对比
+
+| 维度 | Claude Code 实现 | OpenClaw 实现 |
+|------|-----------------|---------------|
+| **Agent 创建** | 按需实例化（任务来才创建） | 预注册常驻（启动时加载所有 Agent） |
+| **通信机制** | 通过 Orchestrator 中转（星型） | agentToAgent 直接调用（网状） |
+| **上下文隔离** | 强隔离（每个子 Agent 独立窗口） | 弱隔离（共享文件/数据库） |
+| **状态持久化** | 会话级（结束即丢失） | 持久化（SQLite/Convex/文件） |
+| **调度方式** | 事件驱动（用户输入触发） | Cron + 事件混合（常驻值守） |
+| **工具调用** | MCP Client 统一代理 | Agent 内部直接调用 Skills |
+| **权限控制** | Orchestrator 集中管控 | 契约声明 + 运行时检查 |
+| **错误恢复** | Orchestrator 重试/降级 | Agent 自主处理 + 状态回滚 |
+
+**关键洞察**：Claude Code 的架构像**现代操作系统**（内核调度进程，进程隔离运行），OpenClaw 的架构像**微服务网格**（服务注册发现，服务间直接调用，统一网关接入）。
+
+---
+
 ## 状态与记忆管理
 
 | 维度 | Claude Code | OpenClaw |
