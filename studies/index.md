@@ -2,8 +2,6 @@
 title: 专题研究
 ---
 
-# 专题研究
-
 ## 概述
 
 对 AI Agent 领域最热门的产品、开源项目和技术栈进行深度专题研究。每个专题从架构设计、核心原理、生态发展到实践落地进行系统性拆解。
@@ -13,7 +11,7 @@ title: 专题研究
 <div class="project-list">
 {% for page in site.pages %}
   {% assign path_parts = page.path | split: '/' %}
-  {% if path_parts[0] == 'studies' and path_parts.size == 2 and page.name == 'index' %}
+  {% if path_parts[0] == 'studies' and path_parts.size == 3 and page.name == 'index.md' %}
     <a href="{{ page.url | relative_url }}" class="project-card">
       <h3 class="project-title">{{ page.title }}</h3>
       {% if page.description %}
