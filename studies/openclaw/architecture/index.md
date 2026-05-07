@@ -8,9 +8,9 @@ tags: [openclaw, architecture, gateway, registry]
 
 {% assign current_dir = page.path | remove: '/index.md' %}
 {% for doc in site.studies %}
-  {% assign doc_parts = doc.path | split: '/' %}
   {% assign doc_dir = doc.path | split: '/' | pop | join: '/' %}
-  {% if doc_dir == current_dir and doc_parts.size == 4 %}
+  {% assign doc_filename = doc.path | split: '/' | last %}
+  {% if doc_dir == current_dir and doc_filename != 'index.md' %}
 - [{{ doc.title }}]({{ doc.url | relative_url }})
   {% endif %}
 {% endfor %}

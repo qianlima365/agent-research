@@ -8,10 +8,10 @@ tags: [claude-code, anthropic, mcp, multi-agent]
 # Claude Code 专题
 
 {% assign path_parts = page.path | split: '/' %}
-{% assign topic = path_parts[1] %}
+{% assign topic = path_parts[0] %}
 {% for doc in site.studies %}
   {% assign doc_parts = doc.path | split: '/' %}
-  {% if doc_parts[1] == topic and doc_parts.size == 4 and doc.path != page.path %}
+  {% if doc_parts[0] == topic and doc_parts.size == 3 and doc.path != page.path %}
 - [{{ doc.title }}]({{ doc.url | relative_url }})
   {% endif %}
 {% endfor %}
