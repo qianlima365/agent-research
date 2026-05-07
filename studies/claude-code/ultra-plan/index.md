@@ -92,3 +92,15 @@ class UltraPlan:
 | **Token 成本** | 低 | 高（约 4 倍） |
 | **耗时** | 短 | 较长（并行但仍需等待全部完成） |
 | **适用场景** | 简单任务 | 复杂决策、高 stakes 场景 |
+
+---
+
+## Related Notes
+
+{% assign current_dir = page.path | split: '/' | pop | join: '/' %}
+{% for doc in site.studies %}
+  {% assign doc_dir = doc.path | split: '/' | pop | join: '/' %}
+  {% if doc_dir == current_dir and doc.name != 'index.md' %}
+- [{{ doc.title }}]({{ doc.url | relative_url }})
+  {% endif %}
+{% endfor %}

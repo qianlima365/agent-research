@@ -102,3 +102,15 @@ class Orchestrator:
 | **短期记忆** | 各 Agent 独立上下文窗口 | 单次任务执行 |
 | **中期记忆** | `CLAUDE.md` 文件 | 项目级共享上下文，跨会话 |
 | **长期记忆** | MCP 向量数据库 | 持久化知识库 |
+
+---
+
+## Related Notes
+
+{% assign current_dir = page.path | split: '/' | pop | join: '/' %}
+{% for doc in site.studies %}
+  {% assign doc_dir = doc.path | split: '/' | pop | join: '/' %}
+  {% if doc_dir == current_dir and doc.name != 'index.md' %}
+- [{{ doc.title }}]({{ doc.url | relative_url }})
+  {% endif %}
+{% endfor %}

@@ -134,3 +134,15 @@ class Agent:
 | 接入成本 | 低（统一接口） | 中 | 高（需适配每个平台） |
 | 功能完整度 | 中（通用抽象） | 高（完全控制） | 高（原生能力） |
 | 维护成本 | 低（社区维护 Adapter） | 高 | 高（需跟进各平台更新） |
+
+---
+
+## Related Notes
+
+{% assign current_dir = page.path | split: '/' | pop | join: '/' %}
+{% for doc in site.studies %}
+  {% assign doc_dir = doc.path | split: '/' | pop | join: '/' %}
+  {% if doc_dir == current_dir and doc.name != 'index.md' %}
+- [{{ doc.title }}]({{ doc.url | relative_url }})
+  {% endif %}
+{% endfor %}

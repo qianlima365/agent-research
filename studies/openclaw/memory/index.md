@@ -123,3 +123,15 @@ class CronScheduler:
 | **实现复杂度** | 低 | 高（需权限控制） |
 
 OpenClaw 默认采用**隔离模式**，但支持通过 `agentToAgent` 显式共享特定信息。
+
+---
+
+## Related Notes
+
+{% assign current_dir = page.path | split: '/' | pop | join: '/' %}
+{% for doc in site.studies %}
+  {% assign doc_dir = doc.path | split: '/' | pop | join: '/' %}
+  {% if doc_dir == current_dir and doc.name != 'index.md' %}
+- [{{ doc.title }}]({{ doc.url | relative_url }})
+  {% endif %}
+{% endfor %}

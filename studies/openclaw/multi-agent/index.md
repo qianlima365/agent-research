@@ -97,3 +97,15 @@ for coder_id in coders:
 | **隔离** | 弱（共享文件/DB） | 强（独立上下文窗口） |
 | **调度** | Cron + 事件混合 | 事件驱动（用户输入） |
 | **错误恢复** | Agent 自主处理 + 状态回滚 | Orchestrator 重试/降级 |
+
+---
+
+## Related Notes
+
+{% assign current_dir = page.path | split: '/' | pop | join: '/' %}
+{% for doc in site.studies %}
+  {% assign doc_dir = doc.path | split: '/' | pop | join: '/' %}
+  {% if doc_dir == current_dir and doc.name != 'index.md' %}
+- [{{ doc.title }}]({{ doc.url | relative_url }})
+  {% endif %}
+{% endfor %}
