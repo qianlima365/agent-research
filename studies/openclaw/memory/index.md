@@ -1,10 +1,8 @@
 ---
-title: OpenClaw 记忆层设计
+title: 记忆层设计
 description: OpenClaw 的长期记忆、状态持久化和 Cron 常驻运行机制。
 tags: [openclaw, memory, persistence, cron]
 ---
-
-# 记忆层设计
 
 {% assign current_dir = page.path | remove: '/index.md' %}
 {% for p in site.pages %}

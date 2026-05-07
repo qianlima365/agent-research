@@ -1,10 +1,8 @@
 ---
-title: OpenClaw 多智能体设计
+title: 多智能体架构设计
 description: OpenClaw 的去中心化多智能体协作模型，包括 agentToAgent 原语、网状通信和动态组队。
 tags: [openclaw, multi-agent, decentralized, collaboration]
 ---
-
-# 多智能体设计
 
 {% assign current_dir = page.path | remove: '/index.md' %}
 {% for p in site.pages %}
