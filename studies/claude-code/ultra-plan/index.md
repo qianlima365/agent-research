@@ -4,7 +4,7 @@ description: 三探索 + 一评审的并行探索机制，模拟人类团队的�
 tags: [claude-code, ultra-plan, multi-agent, parallel]
 ---
 
-# Claude Code Ultra Plan
+# Ultra Plan
 
 {% assign current_dir = page.path | remove: '/index.md' %}
 {% for p in site.pages %}

@@ -2,7 +2,7 @@
 title: 专题研究
 ---
 
-# 专题研究
+# 专题列表
 
 {% for p in site.pages %}
   {% assign parts = p.path | split: '/' %}

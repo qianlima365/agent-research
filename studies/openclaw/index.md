@@ -5,7 +5,7 @@ description: 开源多通道 AI Agent 框架，通过统一 Gateway 接入 20+ �
 tags: [openclaw, multi-agent, cli, open-source]
 ---
 
-# OpenClaw 专题
+# 专题方向
 
 {% assign topic = page.path | split: '/' | slice: 1 | first %}
 {% for p in site.pages %}

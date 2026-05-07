@@ -4,7 +4,7 @@ description: OpenClaw 的注册中心 + 消息总线 + 多平台 Gateway 三层�
 tags: [openclaw, architecture, gateway, registry]
 ---
 
-# OpenClaw 基础架构
+# 基础架构
 
 {% assign current_dir = page.path | remove: '/index.md' %}
 {% for p in site.pages %}

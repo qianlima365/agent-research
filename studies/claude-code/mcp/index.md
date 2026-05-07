@@ -4,7 +4,7 @@ description: Model Context Protocol 详解、生态现状和安全模型。
 tags: [claude-code, mcp, protocol, tools]
 ---
 
-# Claude Code MCP 协议
+# MCP 协议
 
 {% assign current_dir = page.path | remove: '/index.md' %}
 {% for p in site.pages %}

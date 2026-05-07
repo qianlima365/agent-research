@@ -4,7 +4,7 @@ description: OpenClaw 的去中心化多智能体协作模型，包括 agentToAg
 tags: [openclaw, multi-agent, decentralized, collaboration]
 ---
 
-# OpenClaw 多智能体设计
+# 多智能体设计
 
 {% assign current_dir = page.path | remove: '/index.md' %}
 {% for p in site.pages %}

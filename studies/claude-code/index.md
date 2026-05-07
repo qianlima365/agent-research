@@ -5,7 +5,7 @@ description: Anthropic 官方 CLI 工具，深度集成于开发者工作流，�
 tags: [claude-code, anthropic, mcp, multi-agent]
 ---
 
-# Claude Code 专题
+# 专题方向
 
 {% assign topic = page.path | split: '/' | slice: 1 | first %}
 {% for p in site.pages %}
