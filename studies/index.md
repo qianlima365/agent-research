@@ -2,11 +2,11 @@
 title: 专题研究
 ---
 
-# 专题列表
+# 专题研究
 
-{% for page in site.pages %}
-  {% assign path_parts = page.path | split: '/' %}
-  {% if path_parts[0] == 'studies' and path_parts.size == 3 and page.name == 'index.md' %}
-- [{{ page.title }}]({{ page.url | relative_url }})
+{% for p in site.pages %}
+  {% assign parts = p.path | split: '/' %}
+  {% if parts[0] == 'studies' and parts.size == 3 and p.name == 'index.md' %}
+- [{{ p.title }}]({{ p.url | relative_url }})
   {% endif %}
 {% endfor %}

@@ -7,10 +7,9 @@ tags: [openclaw, architecture, gateway, registry]
 # OpenClaw 基础架构
 
 {% assign current_dir = page.path | remove: '/index.md' %}
-{% for doc in site.studies %}
-  {% assign doc_dir = doc.path | split: '/' | pop | join: '/' %}
-  {% assign doc_filename = doc.path | split: '/' | last %}
-  {% if doc_dir == current_dir and doc_filename != 'index.md' %}
-- [{{ doc.title }}]({{ doc.url | relative_url }})
+{% for p in site.pages %}
+  {% assign p_dir = p.path | split: '/' | pop | join: '/' %}
+  {% if p_dir == current_dir and p.name != 'index.md' %}
+- [{{ p.title }}]({{ p.url | relative_url }})
   {% endif %}
 {% endfor %}
