@@ -2,8 +2,6 @@
 title: 开源项目
 ---
 
-# 开源 Agent 项目
-
 ## 概述
 
 收集并跟踪 AI Agent 领域高质量开源项目，涵盖通用 Agent、垂直领域 Agent、Multi-Agent 系统等方向。
