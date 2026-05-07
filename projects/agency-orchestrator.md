@@ -1,7 +1,7 @@
 ---
 title: Agency Orchestrator — AI 工作流编排引擎
 date: 2026-05-07
-description: 基于 DAG 的 AI 工作流编排引擎，一句话自动调度多个专家角色协作，7 种方式免 API key。
+description: 基于 DAG 的 AI 工作流编排引擎，一句话自动调度多个专家角色协作. 对 agency-agents 角色库的封装, 解决怎么做的问题。
 tags: [multi-agent, orchestration, dag, yaml]
 ---
 
