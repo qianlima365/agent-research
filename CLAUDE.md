@@ -56,6 +56,23 @@ Each collection directory contains an `index.md` that lists its members using Je
 - Collection index pages (e.g., `frameworks/index.md`) use Jekyll Liquid to auto-list child pages, filtering out the index itself by checking `item.title != "框架"`.
 - The root `index.md` lists recently updated pages by checking `page.date`.
 
+## Git Workflow
+
+When adding or modifying content, commit and push directly after the work is done:
+
+```bash
+# Stage all changes
+git add -A
+
+# Commit with a descriptive message
+git commit -m "描述本次更新的内容"
+
+# Push to remote
+git push origin main
+```
+
+GitHub Pages will rebuild and deploy the site automatically within a few minutes.
+
 ## Dependencies
 
 - Jekyll (via GitHub Pages)
