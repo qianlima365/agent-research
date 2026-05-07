@@ -23,6 +23,9 @@ collections:
   research:
     output: true
     permalink: /:collection/:name/
+  studies:
+    output: true
+    permalink: /:collection/:name/
 
 defaults:
   - scope:
@@ -55,6 +58,12 @@ defaults:
     values:
       layout: "page"
       category: "研究笔记"
+  - scope:
+      path: ""
+      type: "studies"
+    values:
+      layout: "page"
+      category: "专题研究"
 
 markdown: kramdown
 highlighter: rouge
