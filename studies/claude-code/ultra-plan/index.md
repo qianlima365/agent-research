@@ -8,8 +8,9 @@ tags: [claude-code, ultra-plan, multi-agent, parallel]
 
 {% assign current_dir = page.path | remove: '/index.md' %}
 {% for doc in site.studies %}
+  {% assign doc_parts = doc.path | split: '/' %}
   {% assign doc_dir = doc.path | split: '/' | pop | join: '/' %}
-  {% if doc_dir == current_dir and doc.name != 'index.md' %}
+  {% if doc_dir == current_dir and doc_parts.size == 4 %}
 - [{{ doc.title }}]({{ doc.url | relative_url }})
   {% endif %}
 {% endfor %}
