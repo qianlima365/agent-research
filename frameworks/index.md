@@ -8,13 +8,25 @@ title: 框架
 
 ## 收录框架
 
-<ul>
+<div class="project-list">
 {% for page in site.pages %}
   {% if page.path contains 'frameworks/' and page.name != 'index.md' %}
-    <li><a href="{{ page.url | relative_url }}">{{ page.title }}</a></li>
+    <a href="{{ page.url | relative_url }}" class="project-card">
+      <h3 class="project-title">{{ page.title }}</h3>
+      {% if page.description %}
+        <p class="project-desc">{{ page.description }}</p>
+      {% endif %}
+      {% if page.tags %}
+        <div class="project-tags">
+          {% for tag in page.tags %}
+            <span class="project-tag">{{ tag }}</span>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </a>
   {% endif %}
 {% endfor %}
-</ul>
+</div>
 
 ## 对比维度
 
