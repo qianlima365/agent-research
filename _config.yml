@@ -25,7 +25,7 @@ collections:
     permalink: /:collection/:name/
   studies:
     output: true
-    permalink: /:collection/:name/
+    permalink: /:collection/:path/
 
 defaults:
   - scope:

@@ -11,8 +11,9 @@ title: 专题研究
 ## 进行中的专题
 
 <div class="project-list">
-{% for page in site.pages %}
-  {% if page.path contains 'studies/' and page.name != 'index.md' %}
+{% for page in site.studies %}
+  {% assign path_parts = page.path | split: '/' %}
+  {% if path_parts.size == 2 and page.name == 'index' %}
     <a href="{{ page.url | relative_url }}" class="project-card">
       <h3 class="project-title">{{ page.title }}</h3>
       {% if page.description %}
