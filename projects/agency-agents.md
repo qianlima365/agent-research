@@ -1,6 +1,8 @@
 ---
 title: The Agency / agency-agents
 date: 2026-05-07
+description: 144+ 个专业 AI Agent 人格库，覆盖 14 个职能领域，支持 11 种主流 AI 编程工具集成。
+tags: [multi-agent, persona, tools-integration]
 ---
 
 # The Agency / agency-agents

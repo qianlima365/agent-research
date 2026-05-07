@@ -10,13 +10,25 @@ title: 开源项目
 
 ## 项目列表
 
-<ul>
+<div class="project-list">
 {% for page in site.pages %}
   {% if page.path contains 'projects/' and page.name != 'index.md' %}
-    <li><a href="{{ page.url | relative_url }}">{{ page.title }}</a></li>
+    <a href="{{ page.url | relative_url }}" class="project-card">
+      <h3 class="project-title">{{ page.title }}</h3>
+      {% if page.description %}
+        <p class="project-desc">{{ page.description }}</p>
+      {% endif %}
+      {% if page.tags %}
+        <div class="project-tags">
+          {% for tag in page.tags %}
+            <span class="project-tag">{{ tag }}</span>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </a>
   {% endif %}
 {% endfor %}
-</ul>
+</div>
 
 ## 分类标签
 
